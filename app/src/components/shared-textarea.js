@@ -26,17 +26,19 @@ function SharedTextarea(props) {
 
 
       //function getCurrentValue() {
-        const valueRef = useRef(value);
+        const [value, _setValue] = React.useState('');
+        const valueRef = React.useRef(value);
         const setValue = (data) => {
           valueRef.current = data;
           _setValue(data);
-          console.log('Current value ${valueRef.current}');
-        }
-        console.log('Successful');
+          //console.log('Current value ${valueRef.current}');
+        };
+        //console.log('Successful');
       //}
     
-        
+
       //Emit to existing value the new value reference
+      //s.emit('existingvalue', {giveValueToId: justJoinedId, valueRef.current.concat(data)});
       s.emit('existingvalue', {giveValueToId: justJoinedId, value});
 
       console.log('emitting existing value', value);
