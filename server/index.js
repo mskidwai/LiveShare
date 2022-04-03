@@ -53,7 +53,7 @@ io.sockets.on('connection', socket => {
                     else return false;
                 });
 
-        if(roomsSocketsIds > 1) {
+        if(roomsSocketsIds > 0) {
             roomsSockets.get(roomsSocketsIds[0]).emit('userconnect', justJoinedId);
             console.log('filtered array of ids', roomsSocketsIds);
         }
@@ -61,6 +61,7 @@ io.sockets.on('connection', socket => {
 
         // });
 
+        // TODO: this is the problem!
         socket.on('existingvalue', ({giveValueToThisId, value}) => {
             roomsSockets.get(giveValueToThisId).emit('textarea', value);
             console.log('recieving existing value', value);

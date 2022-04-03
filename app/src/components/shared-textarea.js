@@ -1,6 +1,7 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { io } from 'socket.io-client';
 import { useParams } from 'react-router-dom';
+import { useRef } from 'react';
 
 
 
@@ -9,7 +10,6 @@ import { useParams } from 'react-router-dom';
 function SharedTextarea(props) {
   const [value, setValue] = useState('');
   const [socket, setSocket] = useState();
-  //const [newVal, setNewVal] = useState('');
   const { room } = useParams();
   useEffect(() => {
     let host = window.location.hostname;
@@ -17,36 +17,28 @@ function SharedTextarea(props) {
     
     const s = io(host, { transports: ['websocket'], secure: true });
     
-    //prompt the client for their name
-    // const name = prompt('What is your name?');
-    // appendMessage('You joined');
-    //we emit the name to new-user which the server is listening for
-    // s.emit('new-user', name)
-    //Send the name in the text area
-    // s.on('chat-message', data => {
-      // appendMessage(`${data.name}: ${data.message}`)
-    // })
-    //Send that the user has connected in the text area
-    // s.on('user-connected', name => {
-      // appendMessage(`${name} connected`)
-      // s.on('textarea', (v) => {
-        //Emits the current value to send to the newly joined socket
-        // s.emit(v, room);
-      // });
-    // })
-    //Send the user has disconnected in the text area
-    // s.on('user-disconnected', name => {
-      // appendMessage(`${name} disconnected`)
-    // })
-    
-
-
     s.emit('join-textarea', room);
 
     //Gets the value and sends it to the new state it received
     s.on('userconnect', (justJoinedId) => {
-      // setValue(value);
-      s.emit('existingvalue', {giveValueToThisId: justJoinedId, value});
+      
+      
+
+
+      //function getCurrentValue() {
+        const valueRef = useRef(value);
+        const setValue = (data) => {
+          valueRef.current = data;
+          _setValue(data);
+          console.log('Current value ${valueRef.current}');
+        }
+        console.log('Successful');
+      //}
+    
+        
+      //Emit to existing value the new value reference
+      s.emit('existingvalue', {giveValueToId: justJoinedId, value});
+
       console.log('emitting existing value', value);
       
       //console.log('User has joined. obtained old value');
@@ -56,18 +48,11 @@ function SharedTextarea(props) {
     s.on('textarea', (v) => {
       setValue(v);
       //Emits the current value to send to the newly joined socket
-      //s.emit(v, room);
     });
     
 
     setSocket(s);
 
-    
-
-    // function appendMessage(message) {
-      // setValue(value + '\n' + message);
-      // s.emit('textarea', message)
-    // }
   }, []);
 
   
